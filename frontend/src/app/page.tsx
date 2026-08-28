@@ -5,6 +5,7 @@ import { Table } from "@/components/ui/Table";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { CategoryChart } from "@/components/ui/CategoryChart";
 import { fetchTransactions } from "@/lib/api";
 import type { Transaction } from "@/lib/types";
 
@@ -17,7 +18,6 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -25,10 +25,8 @@ export default function TransactionsPage() {
   const [sortBy, setSortBy] = useState<"timestamp" | "amount">("timestamp");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  // Detail modal
   const [selected, setSelected] = useState<Transaction | null>(null);
 
-  // Debounce search
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(t);
@@ -49,7 +47,7 @@ export default function TransactionsPage() {
       });
       setData(res.items);
       setTotal(res.total);
-    } catch (err) {
+    } catch {
       setError("Failed to load transactions. Is the backend running?");
     } finally {
       setLoading(false);
@@ -57,7 +55,11 @@ export default function TransactionsPage() {
   }, [page, debouncedSearch, status, category, sortBy, sortOrder]);
 
   useEffect(() => {
-    load();
+    const fetchData = async () => {
+      await load();
+    };
+
+    void fetchData();
   }, [load]);
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
@@ -114,12 +116,12 @@ export default function TransactionsPage() {
       render: (row: Transaction) => {
         const color =
           row.status === "SUCCESS"
-            ? "var(--color-success)"
+            ? "#22c55e"
             : row.status === "FAILED"
-            ? "var(--color-danger)"
-            : "var(--color-warning)";
+            ? "#ef4444"
+            : "#f59e0b";
         return (
-          <span style={{ color, fontWeight: 500, fontSize: "var(--text-xs)" }}>
+          <span style={{ color, fontWeight: 500, fontSize: "12px" }}>
             {row.status}
           </span>
         );
@@ -133,24 +135,31 @@ export default function TransactionsPage() {
   ];
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "var(--space-6)" }}>
-      <h1 style={{ fontSize: "var(--text-2xl)", fontWeight: 700, marginBottom: "var(--space-6)" }}>
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "1.5rem" }}>
+      <h1 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1.5rem" }}>
         Transactions
       </h1>
 
+      {/* Chart */}
+      <CategoryChart
+        activeCategory={category}
+        onCategoryClick={(cat) => {
+          setCategory(cat);
+          setPage(1);
+        }}
+      />
+
       {/* Filters */}
-      <Card style={{ marginBottom: "var(--space-6)" }}>
+      <Card style={{ marginBottom: "1.5rem" }}>
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "var(--space-4)",
+            gap: "1rem",
           }}
         >
           <div>
-            <label style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
-              Search merchant
-            </label>
+            <label style={{ fontSize: "12px", color: "#94a3b8" }}>Search merchant</label>
             <input
               value={search}
               onChange={(e) => {
@@ -162,19 +171,17 @@ export default function TransactionsPage() {
                 width: "100%",
                 marginTop: "4px",
                 padding: "0.5rem 0.75rem",
-                background: "var(--color-bg)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                color: "var(--color-text)",
-                fontSize: "var(--text-sm)",
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "6px",
+                color: "#f1f5f9",
+                fontSize: "14px",
               }}
             />
           </div>
 
           <div>
-            <label style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
-              Status
-            </label>
+            <label style={{ fontSize: "12px", color: "#94a3b8" }}>Status</label>
             <select
               value={status}
               onChange={(e) => {
@@ -185,11 +192,11 @@ export default function TransactionsPage() {
                 width: "100%",
                 marginTop: "4px",
                 padding: "0.5rem 0.75rem",
-                background: "var(--color-bg)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                color: "var(--color-text)",
-                fontSize: "var(--text-sm)",
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "6px",
+                color: "#f1f5f9",
+                fontSize: "14px",
               }}
             >
               <option value="">All</option>
@@ -200,27 +207,38 @@ export default function TransactionsPage() {
           </div>
 
           <div>
-            <label style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)" }}>
-              Category
-            </label>
-            <input
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                setPage(1);
-              }}
-              placeholder="e.g. Food"
-              style={{
-                width: "100%",
-                marginTop: "4px",
-                padding: "0.5rem 0.75rem",
-                background: "var(--color-bg)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                color: "var(--color-text)",
-                fontSize: "var(--text-sm)",
-              }}
-            />
+            <label style={{ fontSize: "12px", color: "#94a3b8" }}>Category</label>
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "4px" }}>
+              <input
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="e.g. Food"
+                style={{
+                  flex: 1,
+                  padding: "0.5rem 0.75rem",
+                  background: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: "6px",
+                  color: "#f1f5f9",
+                  fontSize: "14px",
+                }}
+              />
+              {category && (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => {
+                    setCategory("");
+                    setPage(1);
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </Card>
@@ -244,15 +262,15 @@ export default function TransactionsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginTop: "var(--space-4)",
-          fontSize: "var(--text-sm)",
-          color: "var(--color-text-muted)",
+          marginTop: "1rem",
+          fontSize: "14px",
+          color: "#94a3b8",
         }}
       >
         <span>
           Showing {data.length} of {total.toLocaleString()} transactions
         </span>
-        <div style={{ display: "flex", gap: "var(--space-2)" }}>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           <Button
             variant="secondary"
             size="sm"
@@ -261,7 +279,7 @@ export default function TransactionsPage() {
           >
             Previous
           </Button>
-          <span style={{ padding: "0.4rem 0.75rem" }}>
+          <span>
             Page {page} of {totalPages || 1}
           </span>
           <Button
@@ -287,7 +305,7 @@ export default function TransactionsPage() {
         }
       >
         {selected && (
-          <div style={{ display: "grid", gap: "var(--space-3)", fontSize: "var(--text-sm)" }}>
+          <div style={{ display: "grid", gap: "0.75rem", fontSize: "14px" }}>
             <div><strong>ID:</strong> {selected.id}</div>
             <div><strong>Date:</strong> {new Date(selected.timestamp).toLocaleString("en-IN")}</div>
             <div><strong>Merchant:</strong> {selected.merchant}</div>
@@ -304,4 +322,4 @@ export default function TransactionsPage() {
       </Modal>
     </div>
   );
-} 
+}

@@ -51,3 +51,9 @@ export async function redeemReward(rewardId: number) {
 
   return data as { success: boolean; message: string; new_balance: number };
 }
+
+export async function fetchCategorySpend() {
+  const res = await fetch(`${API_BASE}/api/analytics/categories`);
+  if (!res.ok) throw new Error("Failed to fetch category analytics");
+  return res.json() as Promise<{ category: string; total: number }[]>;
+}

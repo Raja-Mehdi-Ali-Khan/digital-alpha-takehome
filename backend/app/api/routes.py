@@ -47,3 +47,8 @@ def rewards(db: Session = Depends(get_db)):
 @router.post("/redeem", response_model=RedeemResponse)
 def redeem(payload: RedeemRequest, db: Session = Depends(get_db)):
     return redeem_reward(db, payload)
+
+@router.get("/analytics/categories")
+def category_analytics(db: Session = Depends(get_db)):
+    from app.services.transactions import get_category_spend
+    return get_category_spend(db)

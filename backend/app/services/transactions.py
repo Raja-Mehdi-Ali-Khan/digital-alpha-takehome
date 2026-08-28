@@ -78,3 +78,21 @@ def redeem_reward(db: Session, payload: RedeemRequest):
         "message": f"Successfully redeemed {reward.name}",
         "new_balance": balance_row.balance
     }
+
+def get_category_spend(db: Session):
+    from sqlalchemy import func
+    from app.models.models import Transaction, Category
+
+    results = (
+        db.query(
+            Category.name,
+            func.sum(Transaction.amount).label("total")
+        )
+        .join(Transaction, Transaction.category_id == Category.id)
+        .filter(Transaction.status == "SUCCESS")
+        .group_by(Category.name)
+        .order_by(func.sum(Transaction.amount).desc())
+        .all()
+    )
+
+    return [{"category": r.name, "total": float(r.total)} for r in results]

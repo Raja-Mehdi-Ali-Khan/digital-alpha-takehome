@@ -135,10 +135,14 @@ export default function TransactionsPage() {
   ];
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "1.5rem" }}>
-      <h1 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1.5rem" }}>
-        Transactions
-      </h1>
+    <div className="page-shell">
+      <div style={{ marginBottom: "2rem" }}>
+        <div className="page-kicker">Overview / Activity</div>
+        <h1 className="page-title">Your spending, at a glance.</h1>
+        <p className="page-subtitle">
+          Review recent card activity, understand your spending patterns, and keep every payment on track.
+        </p>
+      </div>
 
       {/* Chart */}
       <CategoryChart
@@ -151,16 +155,19 @@ export default function TransactionsPage() {
 
       {/* Filters */}
       <Card style={{ marginBottom: "1.5rem" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "1rem",
-          }}
-        >
+        <div className="section-heading">
           <div>
-            <label style={{ fontSize: "12px", color: "#94a3b8" }}>Search merchant</label>
+            <div className="page-kicker">Find a payment</div>
+            <h2>Filter transactions</h2>
+          </div>
+          <span style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>Live results</span>
+        </div>
+        <div className="filter-grid">
+          <div>
+            <label className="field-label" htmlFor="merchant-search">Search merchant</label>
             <input
+              id="merchant-search"
+              className="field-control"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -181,8 +188,10 @@ export default function TransactionsPage() {
           </div>
 
           <div>
-            <label style={{ fontSize: "12px", color: "#94a3b8" }}>Status</label>
+            <label className="field-label" htmlFor="status-filter">Status</label>
             <select
+              id="status-filter"
+              className="field-control"
               value={status}
               onChange={(e) => {
                 setStatus(e.target.value);
@@ -207,9 +216,11 @@ export default function TransactionsPage() {
           </div>
 
           <div>
-            <label style={{ fontSize: "12px", color: "#94a3b8" }}>Category</label>
+            <label className="field-label" htmlFor="category-filter">Category</label>
             <div style={{ display: "flex", gap: "0.5rem", marginTop: "4px" }}>
               <input
+                id="category-filter"
+                className="field-control"
                 value={category}
                 onChange={(e) => {
                   setCategory(e.target.value);
@@ -258,19 +269,12 @@ export default function TransactionsPage() {
 
       {/* Pagination */}
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: "1rem",
-          fontSize: "14px",
-          color: "#94a3b8",
-        }}
+        className="pagination-bar"
       >
         <span>
           Showing {data.length} of {total.toLocaleString()} transactions
         </span>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <div className="pagination-actions" style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           <Button
             variant="secondary"
             size="sm"

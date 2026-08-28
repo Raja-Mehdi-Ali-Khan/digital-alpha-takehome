@@ -55,6 +55,7 @@ export function Table<T extends { id: string | number }>({
       style={{
         width: "100%",
         overflowX: "auto",
+        overflowY: "hidden",
         border: "1px solid var(--color-border)",
         borderRadius: "var(--radius-lg)",
         background: "var(--color-surface)",
@@ -64,7 +65,8 @@ export function Table<T extends { id: string | number }>({
         style={{
           width: "100%",
           borderCollapse: "collapse",
-          minWidth: "700px",
+          minWidth: "820px",
+          tableLayout: "auto",
         }}
       >
         <thead>
@@ -77,12 +79,14 @@ export function Table<T extends { id: string | number }>({
                   position: "sticky",
                   top: 0,
                   background: "var(--color-surface)",
-                  padding: "var(--space-3) var(--space-4)",
+                  padding: "0.9rem 1rem",
                   textAlign: "left",
                   fontSize: "var(--text-sm)",
                   fontWeight: 600,
                   color: "var(--color-text-muted)",
                   borderBottom: "1px solid var(--color-border)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
                   cursor: col.sortable ? "pointer" : "default",
                   whiteSpace: "nowrap",
                   width: col.width,

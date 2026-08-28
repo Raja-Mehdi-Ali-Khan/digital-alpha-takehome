@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { fetchBalance } from "@/lib/api";
 
 export function Header() {
@@ -40,10 +41,10 @@ export function Header() {
   });
 
   return (
-    <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgb(255 255 255 / 0.84)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-border)", padding: "0.85rem max(1rem, calc((100% - 1200px) / 2))" }}>
+    <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgb(255 255 255 / 0.84)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-border)", padding: "0.85rem 1rem" }}>
       <div className="app-header-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-          <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: "2rem", height: "2rem", borderRadius: "0.65rem", background: "var(--color-primary)", color: "white", fontSize: "0.8rem", fontWeight: 800, letterSpacing: "-0.05em" }}>DA</span>
+          <Image src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=96&q=80" alt="" width={40} height={40} style={{ borderRadius: "0.65rem", objectFit: "cover" }} />
           <span>
             <strong style={{ display: "block", fontSize: "0.96rem", lineHeight: 1.1 }}>Digital Alpha</strong>
             <small style={{ color: "var(--color-text-muted)", fontSize: "0.68rem" }}>Personal finance</small>

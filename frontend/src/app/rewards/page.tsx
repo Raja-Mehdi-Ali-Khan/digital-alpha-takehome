@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
@@ -13,6 +14,15 @@ type Reward = {
   cost_in_coins: number;
   is_active: boolean;
 };
+
+const REWARD_IMAGES = [
+  "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80",
+];
 
 export default function RewardsPage() {
   const [rewards, setRewards] = useState<Reward[]>([]);
@@ -118,9 +128,10 @@ export default function RewardsPage() {
       <div
         className="rewards-grid"
       >
-        {rewards.map((reward) => (
+        {rewards.map((reward, index) => (
           <Card key={reward.id} style={{ minHeight: "220px" }}>
             <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "0.75rem" }}>
+              <Image className="reward-image" src={REWARD_IMAGES[index % REWARD_IMAGES.length]} alt="" width={800} height={110} />
               <h3 style={{ fontSize: "1.1rem", fontWeight: 600 }}>{reward.name}</h3>
               <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", flex: 1 }}>
                 {reward.description || "No description"}

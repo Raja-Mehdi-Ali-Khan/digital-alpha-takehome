@@ -199,6 +199,16 @@ input::placeholder {
   width: 1.15rem;
 }
 
+.range-slider input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 0.35rem;
+}
+
+.range-slider input[type="range"]::-moz-range-track {
+  background: transparent;
+  height: 0.35rem;
+}
+
 .range-slider input[type="range"]::-moz-range-thumb {
   background: var(--color-surface);
   border: 3px solid var(--color-primary);
@@ -265,6 +275,13 @@ input::placeholder {
 
 .reward-card {
   min-height: 220px;
+}
+
+.reward-image {
+  border-radius: var(--radius-md);
+  height: 110px;
+  object-fit: cover;
+  width: 100%;
 }
 
 @media (max-width: 720px) {

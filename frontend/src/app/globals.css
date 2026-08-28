@@ -50,10 +50,10 @@ input::placeholder {
 .filter-sidebar {
   left: 1.5rem;
   margin: 0 !important;
-  max-height: calc(100vh - 7rem);
+  max-height: calc(100vh - 116px);
   overflow-y: auto;
   position: fixed;
-  top: 5.5rem;
+  top: 116px;
   width: 17.5rem;
   z-index: 20;
 }
@@ -269,7 +269,7 @@ input::placeholder {
 
 .rewards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 2.2rem;
 }
@@ -345,6 +345,10 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 
+  .rewards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .pagination-bar {
     align-items: stretch;
     flex-direction: column;
@@ -352,6 +356,12 @@ input::placeholder {
 
   .pagination-bar > div {
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 520px) {
+  .rewards-grid {
+    grid-template-columns: 1fr;
   }
 }
 

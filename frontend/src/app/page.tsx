@@ -231,7 +231,7 @@ export default function TransactionsPage() {
           <div className="amount-range-field">
             <div className="range-heading">
               <label className="field-label" htmlFor="min-amount">Amount range</label>
-              <span>{minAmount ? `₹${Number(minAmount).toLocaleString("en-IN")}` : "Any"} - {maxAmount ? `₹${Number(maxAmount).toLocaleString("en-IN")}` : "Any"}</span>
+              <span>{minAmount ? `₹${Number(minAmount).toLocaleString("en-IN")}` : `₹${amountBounds.minimum.toLocaleString("en-IN")}`} - {maxAmount ? `₹${Number(maxAmount).toLocaleString("en-IN")}` : `₹${amountBounds.maximum.toLocaleString("en-IN")}`}</span>
             </div>
             <div className="range-slider" style={{ "--range-start": `${amountBounds.maximum > amountBounds.minimum ? ((Number(minAmount || amountBounds.minimum) - amountBounds.minimum) / (amountBounds.maximum - amountBounds.minimum)) * 100 : 0}%`, "--range-end": `${amountBounds.maximum > amountBounds.minimum ? ((Number(maxAmount || amountBounds.maximum) - amountBounds.minimum) / (amountBounds.maximum - amountBounds.minimum)) * 100 : 100}%` } as CSSProperties}>
               <div className="range-track" />

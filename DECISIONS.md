@@ -5,16 +5,16 @@
 **Why:** The backend already supports filtering, sorting, and pagination as query parameters, so paginating server-side keeps each response small and the table feels instant regardless of dataset size. It's also simpler and more reliable to get right under a tight time budget than a virtualized scroll container, and it naturally scales if the dataset grows well past 10k rows. Virtualization would only be strictly necessary if the product required loading and scrolling through the *entire* dataset client-side in one view, which the brief doesn't require (filter/search/sort against the full set, not necessarily render it all at once).
 
 ## Coin balance: precomputed + stored, not calculated per-request
-**Decision:** The coin balance lives in a single-row `coin_balance` table, recalculated by a script that scans all `SUCCESS` transactions (1 coin per ₹100 spent, capped at 50 coins per transaction) and updates the row, rather than being computed live on every `/api/balance` call.
-**Why:** Computing the balance live by summing 10k transactions on every request is wasteful once redeem/balance calls become frequent, and it makes race conditions between "read balance" and "redeem" harder to reason about. A stored, row-locked balance (`SELECT ... FOR UPDATE`) is the more realistic pattern for a real payments/rewards system: reads are cheap, and writes (redemptions) are the only place that needs a lock. The recalculation script is idempotent and safe to re-run, which also makes it a reasonable one-time seeding step rather than a background job for this assignment's scope.
+**Decision:** The coin balance lives in a single-row `coin_balance` table. It is initialized by the seed script and can be recalculated by a separate idempotent script; both scan successful transactions, award `floor(positive_amount / 100)` coins, and cap each transaction at 50 coins rather than computing the balance live on every `/api/balance` call.
+**Why:** Computing the balance live by summing 10k transactions on every request is wasteful once redeem/balance calls become frequent, and it makes race conditions between "read balance" and "redeem" harder to reason about. A stored, row-locked balance (`SELECT ... FOR UPDATE`) is the more realistic pattern for a real payments/rewards system: reads are cheap, and writes (redemptions) are the only place that needs a lock. Non-positive amounts are explicitly skipped so refunds cannot create negative rewards or accidentally claw back unrelated coins. The seed script also resets the balance from the corrected source data, making a clean Neon setup reproducible with one command.
 
 ## Row-level locking on redeem
 **Decision:** The redeem endpoint takes a row lock (`with_for_update()`) on the coin balance row before validating and updating it.
 **Why:** Without a lock, two concurrent redeem requests could both read the same starting balance, both pass the "sufficient balance" check, and both deduct — leaving the balance more overdrawn than it should be. A row lock serializes redemptions against the balance, which is the minimum needed for correctness even in a small assignment scope.
 
 ## Chart library: Recharts
-**Decision:** Used Recharts for the category spend chart rather than a hand-built SVG chart.
-**Why:** The brief explicitly allows (and doesn't restrict) charting libraries — the "build it yourself" constraint applies only to the transactions table, not charts. Recharts gave a working, responsive, accessible bar chart with click events in far less time than a hand-rolled chart would, which matters given the time budget and the fact that grading weight is concentrated on the table, not the chart implementation.
+**Decision:** Used Recharts for category and monthly spend charts rather than hand-built SVG charts.
+**Why:** The brief explicitly allows charting libraries — the "build it yourself" constraint applies only to the transactions table. Recharts provides responsive bar and line charts, tooltips, click events, and filtered updates with less implementation risk than hand-rolled SVG. Category bars remain clickable, while the persistent filter sidebar provides a larger, more reliable category filter target.
 
 ## Design system: CSS custom properties + inline styles, no CSS framework
 **Decision:** Design tokens (`tokens.css`) define colors, spacing, and type scale as CSS custom properties; components (Button, Card, Modal, Table) consume them via inline `style` objects rather than a utility framework like Tailwind or a CSS-in-JS library.
@@ -22,7 +22,15 @@
 
 ## State management: plain React state, no external library
 **Decision:** Component state (filters, search, sort, pagination, modal open/close, redeem flow) is handled with `useState`/`useCallback`/`useEffect`, without Redux, Zustand, or React Query.
-**Why:** The app's state is local to a couple of pages and doesn't need cross-component global state or complex caching — a data-fetching library would add setup overhead without a clear payoff at this scope. The one place state needs to cross component boundaries (coin balance updating in the header after a redeem elsewhere) is handled with a small custom event (`balance-updated`) rather than pulling in a state library just for that.
+**Why:** The app's state is local to a couple of pages and doesn't need cross-component global state or complex caching — a data-fetching library would add setup overhead without a clear payoff at this scope. The dashboard keeps one filter state object and passes it to the table and both analytics charts, ensuring all three views stay synchronized. The one place state needs to cross component boundaries (coin balance updating in the header after a redeem elsewhere) is handled with a small custom event (`balance-updated`) rather than pulling in a state library just for that.
+
+## Filter layout: sticky sidebar
+**Decision:** Placed transaction filters in a fixed, independently scrollable sidebar below the header on desktop; the sidebar returns to normal document flow on small screens.
+**Why:** A persistent filter rail keeps the controls available while reviewing a long table and makes the dashboard's shared filter state visible. A mobile collapse avoids squeezing a data table and form controls into an unusable narrow column.
+
+## Data quality and hosted reseeding
+**Decision:** Corrected the source JSON by removing one invalid outlier, while retaining negative records for history. The seed script clears dependent redemptions, reloads normalized data, and calculates the initial balance automatically.
+**Why:** The source data is the reproducible input for Neon. Editing the JSON alone does not change a hosted database, so reseeding Neon is the explicit deployment operation; frontend code does not need rebuilding for database-only updates.
 
 ## Backend structure: routes / services / models separated
 **Decision:** FastAPI backend is split into route handlers, a services layer (business logic, e.g. category spend aggregation, coin calculation), and SQLAlchemy models, rather than one file.

@@ -60,7 +60,11 @@ def get_balance(db: Session) -> int:
 
 
 def get_transaction_amount_range(db: Session):
-    minimum, maximum = db.query(func.min(Transaction.amount), func.max(Transaction.amount)).one()
+    minimum, maximum = (
+        db.query(func.min(Transaction.amount), func.max(Transaction.amount))
+        .filter(Transaction.amount > 0)
+        .one()
+    )
     return {
         "minimum": float(minimum) if minimum is not None else 0,
         "maximum": float(maximum) if maximum is not None else 0,

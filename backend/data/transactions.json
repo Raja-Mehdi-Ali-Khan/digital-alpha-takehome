@@ -62596,16 +62596,6 @@
     "payment_method": "Credit Card"
   },
   {
-    "id": "TXN2025006262",
-    "timestamp": "2026-04-05T23:59:29Z",
-    "merchant": "JioMart",
-    "category": "Groceries",
-    "amount": 999999999.0,
-    "currency": "INR",
-    "status": "SUCCESS",
-    "payment_method": "Debit Card"
-  },
-  {
     "id": "TXN2025006263",
     "timestamp": 1771864301000,
     "merchant": "Spotify",

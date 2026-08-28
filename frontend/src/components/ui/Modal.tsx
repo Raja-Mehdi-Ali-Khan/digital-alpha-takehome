@@ -76,6 +76,7 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
         justifyContent: "center",
         zIndex: 1000,
         padding: "var(--space-4)",
+        backdropFilter: "blur(7px)",
       }}
     >
       <div

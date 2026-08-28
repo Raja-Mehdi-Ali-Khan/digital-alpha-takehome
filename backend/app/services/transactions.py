@@ -1,4 +1,6 @@
 ﻿from sqlalchemy.orm import Session, joinedload
+from datetime import date, datetime, time, timedelta, timezone
+from decimal import Decimal
 from sqlalchemy import func
 from fastapi import HTTPException, status
 from app.models.models import Transaction, Category, Reward, CoinBalance, Redemption
@@ -14,6 +16,10 @@ def get_transactions(
     search: str | None = None,
     sort_by: str = "timestamp",
     sort_order: str = "desc",
+    start_date: date | None = None,
+    end_date: date | None = None,
+    min_amount: Decimal | None = None,
+    max_amount: Decimal | None = None,
 ):
     query = db.query(Transaction).options(joinedload(Transaction.category))
 
@@ -23,6 +29,15 @@ def get_transactions(
         query = query.filter(Transaction.status == status_filter.upper())
     if search:
         query = query.filter(Transaction.merchant.ilike(f"%{search}%"))
+    if start_date:
+        query = query.filter(Transaction.timestamp >= datetime.combine(start_date, time.min, tzinfo=timezone.utc))
+    if end_date:
+        next_day = end_date + timedelta(days=1)
+        query = query.filter(Transaction.timestamp < datetime.combine(next_day, time.min, tzinfo=timezone.utc))
+    if min_amount is not None:
+        query = query.filter(Transaction.amount >= min_amount)
+    if max_amount is not None:
+        query = query.filter(Transaction.amount <= max_amount)
 
     total = query.count()
 
@@ -70,8 +85,12 @@ def redeem_reward(db: Session, payload: RedeemRequest):
     balance_row.balance -= reward.cost_in_coins
     redemption = Redemption(reward_id=reward.id, coins_spent=reward.cost_in_coins)
     db.add(redemption)
-    db.commit()
-    db.refresh(balance_row)
+    try:
+        db.commit()
+        db.refresh(balance_row)
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Unable to complete redemption")
 
     return {
         "success": True,
@@ -96,3 +115,17 @@ def get_category_spend(db: Session):
     )
 
     return [{"category": r.name, "total": float(r.total)} for r in results]
+
+
+def get_monthly_spend(db: Session):
+    results = (
+        db.query(
+            func.to_char(func.date_trunc("month", Transaction.timestamp), "YYYY-MM").label("month"),
+            func.sum(Transaction.amount).label("total"),
+        )
+        .filter(Transaction.status == "SUCCESS")
+        .group_by(func.date_trunc("month", Transaction.timestamp))
+        .order_by(func.date_trunc("month", Transaction.timestamp))
+        .all()
+    )
+    return [{"month": row.month, "total": float(row.total)} for row in results]

@@ -1,4 +1,6 @@
-﻿from fastapi import APIRouter, Depends, Query
+﻿from datetime import date
+from decimal import Decimal
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -19,12 +21,22 @@ def list_transactions(
     category: Optional[str] = None,
     status: Optional[str] = None,
     search: Optional[str] = None,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+    min_amount: Optional[Decimal] = None,
+    max_amount: Optional[Decimal] = None,
     sort_by: str = Query("timestamp", pattern="^(timestamp|amount)$"),
     sort_order: str = Query("desc", pattern="^(asc|desc)$"),
     db: Session = Depends(get_db),
 ):
+    if start_date and end_date and start_date > end_date:
+        raise HTTPException(status_code=400, detail="start_date must be on or before end_date")
+    if min_amount is not None and max_amount is not None and min_amount > max_amount:
+        raise HTTPException(status_code=400, detail="min_amount must be less than or equal to max_amount")
+
     total, items = get_transactions(
-        db, page, page_size, category, status, search, sort_by, sort_order
+        db, page, page_size, category, status, search, sort_by, sort_order,
+        start_date, end_date, min_amount, max_amount
     )
     return {
         "total": total,
@@ -52,3 +64,9 @@ def redeem(payload: RedeemRequest, db: Session = Depends(get_db)):
 def category_analytics(db: Session = Depends(get_db)):
     from app.services.transactions import get_category_spend
     return get_category_spend(db)
+
+
+@router.get("/analytics/monthly")
+def monthly_analytics(db: Session = Depends(get_db)):
+    from app.services.transactions import get_monthly_spend
+    return get_monthly_spend(db)

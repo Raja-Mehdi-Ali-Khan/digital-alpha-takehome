@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { CategoryChart } from "@/components/ui/CategoryChart";
+import { MonthlyTrendChart } from "@/components/ui/MonthlyTrendChart";
 import { fetchTransactions } from "@/lib/api";
 import type { Transaction } from "@/lib/types";
 
@@ -22,6 +23,10 @@ export default function TransactionsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("");
   const [category, setCategory] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
   const [sortBy, setSortBy] = useState<"timestamp" | "amount">("timestamp");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -42,6 +47,10 @@ export default function TransactionsPage() {
         search: debouncedSearch || undefined,
         status: status || undefined,
         category: category || undefined,
+        start_date: startDate || undefined,
+        end_date: endDate || undefined,
+        min_amount: minAmount || undefined,
+        max_amount: maxAmount || undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
       });
@@ -52,7 +61,7 @@ export default function TransactionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch, status, category, sortBy, sortOrder]);
+  }, [page, debouncedSearch, status, category, startDate, endDate, minAmount, maxAmount, sortBy, sortOrder]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,6 +162,8 @@ export default function TransactionsPage() {
         }}
       />
 
+      <MonthlyTrendChart />
+
       {/* Filters */}
       <Card style={{ marginBottom: "1.5rem" }}>
         <div className="section-heading">
@@ -160,7 +171,24 @@ export default function TransactionsPage() {
             <div className="page-kicker">Find a payment</div>
             <h2>Filter transactions</h2>
           </div>
-          <span style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>Live results</span>
+          <Button
+            size="sm"
+            variant="ghost"
+            disabled={!search && !status && !category && !startDate && !endDate && !minAmount && !maxAmount}
+            onClick={() => {
+              setSearch("");
+              setDebouncedSearch("");
+              setStatus("");
+              setCategory("");
+              setStartDate("");
+              setEndDate("");
+              setMinAmount("");
+              setMaxAmount("");
+              setPage(1);
+            }}
+          >
+            Clear filters
+          </Button>
         </div>
         <div className="filter-grid">
           <div>
@@ -185,6 +213,26 @@ export default function TransactionsPage() {
                 fontSize: "14px",
               }}
             />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="start-date">From date</label>
+            <input id="start-date" className="field-control" type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="end-date">To date</label>
+            <input id="end-date" className="field-control" type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="min-amount">Minimum amount</label>
+            <input id="min-amount" className="field-control" type="number" step="0.01" value={minAmount} onChange={(e) => { setMinAmount(e.target.value); setPage(1); }} placeholder="₹ 0.00" style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="max-amount">Maximum amount</label>
+            <input id="max-amount" className="field-control" type="number" step="0.01" value={maxAmount} onChange={(e) => { setMaxAmount(e.target.value); setPage(1); }} placeholder="₹ 0.00" style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
           </div>
 
           <div>

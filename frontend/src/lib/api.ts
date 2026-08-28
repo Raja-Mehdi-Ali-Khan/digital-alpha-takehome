@@ -6,6 +6,10 @@ export async function fetchTransactions(params: {
   category?: string;
   status?: string;
   search?: string;
+  start_date?: string;
+  end_date?: string;
+  min_amount?: string;
+  max_amount?: string;
   sort_by?: "timestamp" | "amount";
   sort_order?: "asc" | "desc";
 }): Promise<import("./types").TransactionListResponse> {
@@ -16,6 +20,10 @@ export async function fetchTransactions(params: {
   if (params.category) query.set("category", params.category);
   if (params.status) query.set("status", params.status);
   if (params.search) query.set("search", params.search);
+  if (params.start_date) query.set("start_date", params.start_date);
+  if (params.end_date) query.set("end_date", params.end_date);
+  if (params.min_amount) query.set("min_amount", params.min_amount);
+  if (params.max_amount) query.set("max_amount", params.max_amount);
   if (params.sort_by) query.set("sort_by", params.sort_by);
   if (params.sort_order) query.set("sort_order", params.sort_order);
 
@@ -56,4 +64,10 @@ export async function fetchCategorySpend() {
   const res = await fetch(`${API_BASE}/api/analytics/categories`);
   if (!res.ok) throw new Error("Failed to fetch category analytics");
   return res.json() as Promise<{ category: string; total: number }[]>;
+}
+
+export async function fetchMonthlySpend() {
+  const res = await fetch(`${API_BASE}/api/analytics/monthly`);
+  if (!res.ok) throw new Error("Failed to fetch monthly analytics");
+  return res.json() as Promise<{ month: string; total: number }[]>;
 }

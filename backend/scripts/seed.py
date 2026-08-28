@@ -2,13 +2,13 @@
 import sys
 from pathlib import Path
 from datetime import datetime, timezone
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 from dateutil import parser as date_parser
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.db.database import engine, SessionLocal, init_db
-from app.models.models import Category, Transaction, Reward, CoinBalance
+from app.models.models import Category, Transaction, Reward, CoinBalance, Redemption
 
 DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "transactions.json"
 
@@ -20,7 +20,10 @@ def parse_timestamp(value):
         try:
             if value.endswith("Z"):
                 value = value[:-1] + "+00:00"
-            return datetime.fromisoformat(value)
+            parsed = datetime.fromisoformat(value)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.astimezone(timezone.utc)
         except ValueError:
             dt = date_parser.parse(value)
             if dt.tzinfo is None:
@@ -36,6 +39,7 @@ def seed():
     db = SessionLocal()
     try:
         print("Clearing old data...")
+        db.query(Redemption).delete()
         db.query(Transaction).delete()
         db.query(Category).delete()
         db.query(Reward).delete()
@@ -115,10 +119,15 @@ def seed():
             Reward(name="Premium Lounge Access", description="Airport lounge access (1 visit)", cost_in_coins=200),
         ]
         db.add_all(rewards)
-        db.add(CoinBalance(id=1, balance=0))
+        initial_balance = 0
+        for row in unique_rows:
+            amount = Decimal(str(row["amount"]))
+            if str(row["status"]).upper() == "SUCCESS" and amount > 0:
+                initial_balance += min(int((amount // 100).to_integral_value(rounding=ROUND_DOWN)), 50)
+        db.add(CoinBalance(id=1, balance=initial_balance))
         db.commit()
 
-        print("Rewards and coin balance seeded.")
+        print(f"Rewards and coin balance seeded ({initial_balance:,} coins).")
         print("SEED COMPLETE")
 
     except Exception as e:

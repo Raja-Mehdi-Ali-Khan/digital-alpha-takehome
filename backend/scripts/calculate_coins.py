@@ -20,6 +20,8 @@ def calculate_and_set_balance():
 
         total_coins = 0
         for (amount,) in rows:
+            if amount <= 0:
+                continue
             # 1 coin per ₹100, floor, then cap at 50
             coins = int((Decimal(str(amount)) // 100).to_integral_value(rounding=ROUND_DOWN))
             coins = min(coins, 50)

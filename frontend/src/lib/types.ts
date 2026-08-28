@@ -20,3 +20,8 @@ export type TransactionListResponse = {
   page_size: number;
   items: Transaction[];
 };
+
+export type MonthlySpend = {
+  month: string;
+  total: number;
+};

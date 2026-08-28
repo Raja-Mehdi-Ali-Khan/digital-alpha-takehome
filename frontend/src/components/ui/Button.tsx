@@ -17,12 +17,12 @@ export function Button({
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: "6px",
-    fontWeight: 500,
+    borderRadius: "var(--radius-sm)",
+    fontWeight: 650,
     border: "1px solid transparent",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.6 : 1,
-    transition: "all 0.15s",
+    transition: "transform 0.15s, box-shadow 0.15s, background 0.15s",
   };
 
   const sizes = {
@@ -33,21 +33,22 @@ export function Button({
 
   const variants = {
     primary: {
-      background: "#3b82f6",
+      background: "var(--color-primary)",
       color: "white",
+      boxShadow: "0 6px 14px rgb(8 127 115 / 0.18)",
     },
     secondary: {
-      background: "#1e293b",
-      color: "#e2e8f0",
-      borderColor: "#334155",
+      background: "var(--color-surface)",
+      color: "var(--color-ink-soft)",
+      borderColor: "var(--color-border)",
     },
     danger: {
-      background: "#ef4444",
+      background: "var(--color-danger)",
       color: "white",
     },
     ghost: {
       background: "transparent",
-      color: "#94a3b8",
+      color: "var(--color-text-muted)",
     },
   };
 

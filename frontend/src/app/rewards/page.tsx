@@ -66,8 +66,8 @@ export default function RewardsPage() {
 
       setSuccessMessage(result.message);
       setSelected(null);
-    } catch (err: any) {
-      setRedeemError(err.message || "Redeem failed");
+    } catch (err: unknown) {
+      setRedeemError(err instanceof Error ? err.message : "Redeem failed");
     } finally {
       setRedeeming(false);
     }
@@ -90,13 +90,14 @@ export default function RewardsPage() {
   }
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1.5rem" }}>
-      <h1 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.35rem" }}>
-        Rewards Catalogue
-      </h1>
-      <p style={{ color: "var(--color-text-muted)", marginBottom: "2rem" }}>
-        Redeem your coins for vouchers and perks
-      </p>
+    <div className="page-shell">
+      <div style={{ marginBottom: "2rem" }}>
+        <div className="page-kicker">Membership / Benefits</div>
+        <h1 className="page-title">A little more from every payment.</h1>
+        <p className="page-subtitle">
+          Use your reward coins on practical perks, vouchers, and everyday savings.
+        </p>
+      </div>
 
       {successMessage && (
         <div
@@ -115,14 +116,10 @@ export default function RewardsPage() {
       )}
 
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-          gap: "1.25rem",
-        }}
+        className="rewards-grid"
       >
         {rewards.map((reward) => (
-          <Card key={reward.id}>
+          <Card key={reward.id} style={{ minHeight: "220px" }}>
             <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "0.75rem" }}>
               <h3 style={{ fontSize: "1.1rem", fontWeight: 600 }}>{reward.name}</h3>
               <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", flex: 1 }}>

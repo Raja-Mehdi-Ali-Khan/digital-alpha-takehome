@@ -32,6 +32,12 @@ export async function fetchTransactions(params: {
   return res.json();
 }
 
+export async function fetchTransactionAmountRange() {
+  const res = await fetch(`${API_BASE}/api/transactions/range`);
+  if (!res.ok) throw new Error("Failed to fetch transaction amount range");
+  return res.json() as Promise<{ minimum: number; maximum: number }>;
+}
+
 export async function fetchBalance(): Promise<{ balance: number }> {
   const res = await fetch(`${API_BASE}/api/balance`);
   if (!res.ok) throw new Error("Failed to fetch balance");

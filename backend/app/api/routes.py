@@ -46,6 +46,12 @@ def list_transactions(
     }
 
 
+@router.get("/transactions/range")
+def transaction_amount_range(db: Session = Depends(get_db)):
+    from app.services.transactions import get_transaction_amount_range
+    return get_transaction_amount_range(db)
+
+
 @router.get("/balance", response_model=BalanceOut)
 def balance(db: Session = Depends(get_db)):
     return {"balance": get_balance(db)}

@@ -77,7 +77,7 @@ input::placeholder {
 
 .page-title {
   color: var(--color-text);
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.08;
@@ -134,6 +134,90 @@ input::placeholder {
   background: var(--color-surface) !important;
   border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 3px rgb(8 127 115 / 0.12);
+}
+
+.range-heading,
+.range-labels {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.range-heading span {
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.range-slider {
+  height: 2rem;
+  margin: 0.15rem 0 0;
+  position: relative;
+}
+
+.range-track,
+.range-track::after {
+  border-radius: 999px;
+  height: 0.35rem;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0.82rem;
+}
+
+.range-track {
+  background: #dce7e4;
+}
+
+.range-track::after {
+  background: var(--color-primary);
+  content: "";
+  left: var(--range-start);
+  right: calc(100% - var(--range-end));
+}
+
+.range-slider input[type="range"] {
+  appearance: none;
+  background: transparent;
+  height: 2rem;
+  margin: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+
+.range-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  background: var(--color-surface);
+  border: 3px solid var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgb(8 127 115 / 0.2);
+  cursor: grab;
+  height: 1.15rem;
+  pointer-events: auto;
+  width: 1.15rem;
+}
+
+.range-slider input[type="range"]::-moz-range-thumb {
+  background: var(--color-surface);
+  border: 3px solid var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgb(8 127 115 / 0.2);
+  cursor: grab;
+  height: 0.8rem;
+  pointer-events: auto;
+  width: 0.8rem;
+}
+
+.range-slider input[type="range"]:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.range-labels {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
 }
 
 .pagination-bar {

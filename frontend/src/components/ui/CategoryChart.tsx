@@ -68,7 +68,7 @@ export function CategoryChart({ onCategoryClick, activeCategory, filters = {} }:
         <span style={{ color: "var(--color-text-muted)", fontSize: "0.8rem" }}>Click a bar to filter</span>
       </div>
 
-      <div style={{ width: "100%", height: Math.max(260, data.length * 27) }}>
+      <div style={{ width: "100%", height: Math.max(320, data.length * 32) }}>
         <ResponsiveContainer>
           <BarChart data={data} layout="vertical" margin={{ top: 4, right: 32, bottom: 4, left: 8 }}>
             <XAxis

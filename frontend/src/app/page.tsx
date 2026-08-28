@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import type { CSSProperties } from "react";
 import { Table } from "@/components/ui/Table";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { CategoryChart } from "@/components/ui/CategoryChart";
 import { MonthlyTrendChart } from "@/components/ui/MonthlyTrendChart";
-import { fetchTransactions } from "@/lib/api";
+import { fetchTransactionAmountRange, fetchTransactions } from "@/lib/api";
 import type { Transaction } from "@/lib/types";
 
 const PAGE_SIZE = 20;
@@ -27,10 +28,17 @@ export default function TransactionsPage() {
   const [endDate, setEndDate] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
+  const [amountBounds, setAmountBounds] = useState({ minimum: 0, maximum: 1000 });
   const [sortBy, setSortBy] = useState<"timestamp" | "amount">("timestamp");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const [selected, setSelected] = useState<Transaction | null>(null);
+
+  useEffect(() => {
+    fetchTransactionAmountRange().then((range) => {
+      setAmountBounds({ minimum: Math.floor(range.minimum), maximum: Math.ceil(range.maximum) });
+    }).catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
@@ -228,14 +236,17 @@ export default function TransactionsPage() {
             <input id="end-date" className="field-control" type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
           </div>
 
-          <div>
-            <label className="field-label" htmlFor="min-amount">Minimum amount</label>
-            <input id="min-amount" className="field-control" type="number" step="0.01" value={minAmount} onChange={(e) => { setMinAmount(e.target.value); setPage(1); }} placeholder="₹ 0.00" style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
-          </div>
-
-          <div>
-            <label className="field-label" htmlFor="max-amount">Maximum amount</label>
-            <input id="max-amount" className="field-control" type="number" step="0.01" value={maxAmount} onChange={(e) => { setMaxAmount(e.target.value); setPage(1); }} placeholder="₹ 0.00" style={{ width: "100%", padding: "0.5rem 0.75rem" }} />
+          <div className="amount-range-field">
+            <div className="range-heading">
+              <label className="field-label" htmlFor="min-amount">Amount range</label>
+              <span>{minAmount ? `₹${Number(minAmount).toLocaleString("en-IN")}` : "Any"} - {maxAmount ? `₹${Number(maxAmount).toLocaleString("en-IN")}` : "Any"}</span>
+            </div>
+            <div className="range-slider" style={{ "--range-start": `${amountBounds.maximum > amountBounds.minimum ? ((Number(minAmount || amountBounds.minimum) - amountBounds.minimum) / (amountBounds.maximum - amountBounds.minimum)) * 100 : 0}%`, "--range-end": `${amountBounds.maximum > amountBounds.minimum ? ((Number(maxAmount || amountBounds.maximum) - amountBounds.minimum) / (amountBounds.maximum - amountBounds.minimum)) * 100 : 100}%` } as CSSProperties}>
+              <div className="range-track" />
+              <input id="min-amount" aria-label="Minimum transaction amount" type="range" min={amountBounds.minimum} max={amountBounds.maximum} step="1" value={Number(minAmount || amountBounds.minimum)} onChange={(e) => { const value = Math.min(Number(e.target.value), Number(maxAmount || amountBounds.maximum)); setMinAmount(String(value)); setPage(1); }} />
+              <input id="max-amount" aria-label="Maximum transaction amount" type="range" min={amountBounds.minimum} max={amountBounds.maximum} step="1" value={Number(maxAmount || amountBounds.maximum)} onChange={(e) => { const value = Math.max(Number(e.target.value), Number(minAmount || amountBounds.minimum)); setMaxAmount(String(value)); setPage(1); }} />
+            </div>
+            <div className="range-labels"><span>₹{amountBounds.minimum.toLocaleString("en-IN")}</span><span>₹{amountBounds.maximum.toLocaleString("en-IN")}</span></div>
           </div>
 
           <div>

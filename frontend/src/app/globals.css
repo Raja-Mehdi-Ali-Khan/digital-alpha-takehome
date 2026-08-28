@@ -195,6 +195,7 @@ input::placeholder {
 
 .range-track {
   background: #dce7e4;
+  top: 0.82rem;
 }
 
 .range-track::after {
@@ -202,6 +203,7 @@ input::placeholder {
   content: "";
   left: var(--range-start);
   right: calc(100% - var(--range-end));
+  top: 0;
 }
 
 .range-slider input[type="range"] {
@@ -211,6 +213,7 @@ input::placeholder {
   margin: 0;
   pointer-events: none;
   position: absolute;
+  top: 0;
   width: 100%;
 }
 
@@ -227,13 +230,19 @@ input::placeholder {
 }
 
 .range-slider input[type="range"]::-webkit-slider-runnable-track {
-  background: transparent;
+  background: transparent !important;
+  border: 0;
   height: 0.35rem;
 }
 
 .range-slider input[type="range"]::-moz-range-track {
-  background: transparent;
+  background: transparent !important;
+  border: 0;
   height: 0.35rem;
+}
+
+.range-slider input[type="range"]::-moz-range-progress {
+  background: transparent;
 }
 
 .range-slider input[type="range"]::-moz-range-thumb {
@@ -305,12 +314,12 @@ input::placeholder {
 }
 
 .reward-card {
-  min-height: 220px;
+  min-height: 330px;
 }
 
 .reward-image {
   border-radius: var(--radius-md);
-  height: 110px;
+  height: 140px;
   object-fit: cover;
   width: 100%;
 }

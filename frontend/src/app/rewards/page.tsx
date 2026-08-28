@@ -129,7 +129,7 @@ export default function RewardsPage() {
         className="rewards-grid"
       >
         {rewards.map((reward, index) => (
-          <Card key={reward.id} style={{ minHeight: "220px" }}>
+          <Card key={reward.id} className="reward-card">
             <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "0.75rem" }}>
               <Image className="reward-image" src={REWARD_IMAGES[index % REWARD_IMAGES.length]} alt="" width={800} height={110} />
               <h3 style={{ fontSize: "1.1rem", fontWeight: 600 }}>{reward.name}</h3>

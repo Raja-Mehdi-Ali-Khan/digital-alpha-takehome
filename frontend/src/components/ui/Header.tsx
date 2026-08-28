@@ -43,11 +43,8 @@ export function Header() {
     <header className="app-header" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgb(255 255 255 / 0.84)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-border)", padding: "0.85rem 1rem" }}>
       <div className="app-header-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-          <span className="brand-mark" aria-hidden="true">
-            <span>₹</span>
-          </span>
           <span>
-            <strong style={{ display: "block", fontSize: "0.96rem", lineHeight: 1.1 }}>Digital Alpha</strong>
+            <strong style={{ display: "block", fontSize: "1.08rem", letterSpacing: "-0.02em", lineHeight: 1.1 }}>Digital Alpha</strong>
             <small style={{ color: "var(--color-text-muted)", fontSize: "0.68rem" }}>Personal finance</small>
           </span>
         </Link>

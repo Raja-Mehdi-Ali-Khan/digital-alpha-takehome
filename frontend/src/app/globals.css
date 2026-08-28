@@ -76,32 +76,6 @@ input::placeholder {
   text-transform: uppercase;
 }
 
-.brand-mark {
-  align-items: center;
-  background: var(--color-primary);
-  border: 2px solid #05665d;
-  border-radius: 50%;
-  color: #ffffff;
-  display: inline-flex;
-  font-size: 0.9rem;
-  font-weight: 800;
-  height: 2.35rem;
-  justify-content: center;
-  position: relative;
-  width: 2.35rem;
-}
-
-.brand-mark::after {
-  border: 1px solid rgb(255 255 255 / 0.55);
-  border-radius: 50%;
-  content: "";
-  height: 1.55rem;
-  position: absolute;
-  right: 0.28rem;
-  top: 0.28rem;
-  width: 1.55rem;
-}
-
 .page-title {
   color: var(--color-text);
   font-size: clamp(1.75rem, 3.2vw, 2.75rem);

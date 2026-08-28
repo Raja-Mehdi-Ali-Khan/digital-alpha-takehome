@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import { fetchBalance } from "@/lib/api";
 
 export function Header() {
@@ -44,7 +43,9 @@ export function Header() {
     <header className="app-header" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgb(255 255 255 / 0.84)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-border)", padding: "0.85rem 1rem" }}>
       <div className="app-header-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
-          <Image src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=96&q=80" alt="" width={40} height={40} style={{ borderRadius: "0.65rem", objectFit: "cover" }} />
+          <span className="brand-mark" aria-hidden="true">
+            <span>₹</span>
+          </span>
           <span>
             <strong style={{ display: "block", fontSize: "0.96rem", lineHeight: 1.1 }}>Digital Alpha</strong>
             <small style={{ color: "var(--color-text-muted)", fontSize: "0.68rem" }}>Personal finance</small>

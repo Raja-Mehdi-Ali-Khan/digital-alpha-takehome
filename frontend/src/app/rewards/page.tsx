@@ -19,7 +19,7 @@ export default function RewardsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Redeem flow state
+  // Redeem flow
   const [selected, setSelected] = useState<Reward | null>(null);
   const [redeeming, setRedeeming] = useState(false);
   const [redeemError, setRedeemError] = useState<string | null>(null);
@@ -61,13 +61,13 @@ export default function RewardsPage() {
     try {
       const result = await redeemReward(selected.id);
 
-      // Notify the Header to refresh the balance
+      // Tell the Header to refresh the balance
       window.dispatchEvent(new Event("balance-updated"));
 
       setSuccessMessage(result.message);
       setSelected(null);
     } catch (err: any) {
-      setRedeemError(err.message || "Something went wrong");
+      setRedeemError(err.message || "Redeem failed");
     } finally {
       setRedeeming(false);
     }
@@ -75,7 +75,7 @@ export default function RewardsPage() {
 
   if (loading) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center", color: "var(--color-text-muted)" }}>
+      <div style={{ padding: "3rem", textAlign: "center", color: "var(--color-text-muted)" }}>
         Loading rewards…
       </div>
     );
@@ -83,7 +83,7 @@ export default function RewardsPage() {
 
   if (error) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center", color: "var(--color-danger)" }}>
+      <div style={{ padding: "3rem", textAlign: "center", color: "var(--color-danger)" }}>
         {error}
       </div>
     );
@@ -91,7 +91,7 @@ export default function RewardsPage() {
 
   return (
     <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "1.5rem" }}>
-      <h1 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+      <h1 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.35rem" }}>
         Rewards Catalogue
       </h1>
       <p style={{ color: "var(--color-text-muted)", marginBottom: "2rem" }}>
@@ -101,12 +101,13 @@ export default function RewardsPage() {
       {successMessage && (
         <div
           style={{
-            background: "rgba(34, 197, 94, 0.15)",
+            background: "rgba(34, 197, 94, 0.12)",
             border: "1px solid var(--color-success)",
             color: "var(--color-success)",
             padding: "0.75rem 1rem",
             borderRadius: "var(--radius-md)",
             marginBottom: "1.5rem",
+            fontWeight: 500,
           }}
         >
           {successMessage}
@@ -159,8 +160,8 @@ export default function RewardsPage() {
         {selected && (
           <div style={{ display: "grid", gap: "0.75rem" }}>
             <p>
-              You are about to redeem <strong>{selected.name}</strong> for{" "}
-              <strong>{selected.cost_in_coins.toLocaleString()} coins</strong>.
+              Redeem <strong>{selected.name}</strong> for{" "}
+              <strong>{selected.cost_in_coins.toLocaleString()} coins</strong>?
             </p>
             <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>
               This action cannot be undone.
@@ -169,7 +170,7 @@ export default function RewardsPage() {
             {redeemError && (
               <div
                 style={{
-                  background: "rgba(239, 68, 68, 0.15)",
+                  background: "rgba(239, 68, 68, 0.12)",
                   border: "1px solid var(--color-danger)",
                   color: "var(--color-danger)",
                   padding: "0.75rem",

@@ -60,14 +60,24 @@ export async function redeemReward(rewardId: number) {
   return data as { success: boolean; message: string; new_balance: number };
 }
 
-export async function fetchCategorySpend() {
-  const res = await fetch(`${API_BASE}/api/analytics/categories`);
+type AnalyticsParams = Omit<Parameters<typeof fetchTransactions>[0], "page" | "page_size" | "sort_by" | "sort_order">;
+
+function analyticsQuery(params: AnalyticsParams) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) query.set(key, String(value));
+  });
+  return query.toString();
+}
+
+export async function fetchCategorySpend(params: AnalyticsParams = {}) {
+  const res = await fetch(`${API_BASE}/api/analytics/categories?${analyticsQuery(params)}`);
   if (!res.ok) throw new Error("Failed to fetch category analytics");
   return res.json() as Promise<{ category: string; total: number }[]>;
 }
 
-export async function fetchMonthlySpend() {
-  const res = await fetch(`${API_BASE}/api/analytics/monthly`);
+export async function fetchMonthlySpend(params: AnalyticsParams = {}) {
+  const res = await fetch(`${API_BASE}/api/analytics/monthly?${analyticsQuery(params)}`);
   if (!res.ok) throw new Error("Failed to fetch monthly analytics");
   return res.json() as Promise<{ month: string; total: number }[]>;
 }

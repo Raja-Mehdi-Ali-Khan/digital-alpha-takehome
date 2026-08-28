@@ -14,17 +14,37 @@ import { fetchMonthlySpend } from "@/lib/api";
 import { Card } from "@/components/ui/Card";
 import type { MonthlySpend } from "@/lib/types";
 
-export function MonthlyTrendChart() {
+type Props = {
+  filters?: {
+    category?: string;
+    status?: string;
+    search?: string;
+    start_date?: string;
+    end_date?: string;
+    min_amount?: string;
+    max_amount?: string;
+  };
+};
+
+export function MonthlyTrendChart({ filters = {} }: Props) {
   const [data, setData] = useState<MonthlySpend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { category, status, search, start_date, end_date, min_amount, max_amount } = filters;
 
   useEffect(() => {
-    fetchMonthlySpend()
-      .then(setData)
-      .catch(() => setError(true))
+    fetchMonthlySpend({ category, status, search, start_date, end_date, min_amount, max_amount })
+      .then((nextData) => {
+        setData(nextData);
+        setError(false);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [category, status, search, start_date, end_date, min_amount, max_amount]);
 
   return (
     <Card style={{ marginBottom: "1.5rem" }}>
@@ -45,16 +65,18 @@ export function MonthlyTrendChart() {
         <div style={{ height: 260, width: "100%" }}>
           <ResponsiveContainer>
             <LineChart data={data} margin={{ top: 10, right: 18, left: 8, bottom: 8 }}>
-              <CartesianGrid stroke="#526b72" strokeDasharray="3 3" opacity={0.25} />
+              <CartesianGrid stroke="#b9ccc7" strokeDasharray="3 3" opacity={0.7} />
               <XAxis
                 dataKey="month"
-                tick={{ fill: "#c5d8d4", fontSize: 11 }}
+                tick={{ fill: "#607873", fontSize: 11 }}
                 tickFormatter={(value) => new Date(`${value}-01T00:00:00`).toLocaleDateString("en-IN", { month: "short", year: "2-digit" })}
-                axisLine={{ stroke: "#526b72" }}
+                axisLine={{ stroke: "#b9ccc7" }}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: "#c5d8d4", fontSize: 11 }}
+                tick={{ fill: "#607873", fontSize: 11 }}
+                scale="sqrt"
+                domain={[0, "auto"]}
                 tickFormatter={(value) => `₹${Number(value).toLocaleString("en-IN", { notation: "compact" })}`}
                 axisLine={false}
                 tickLine={false}
@@ -68,7 +90,7 @@ export function MonthlyTrendChart() {
                 itemStyle={{ color: "#087f73", fontWeight: 600 }}
                 contentStyle={{ background: "#ffffff", border: "1px solid #c3d8d2", borderRadius: "8px", color: "#17332e", padding: "10px 12px" }}
               />
-              <Line type="monotone" dataKey="total" name="Spend" stroke="#e8ad57" strokeWidth={3} dot={{ fill: "#087f73", r: 4, strokeWidth: 2, stroke: "#ffffff" }} activeDot={{ r: 6, fill: "#087f73" }} />
+              <Line type="monotone" dataKey="total" name="Spend" stroke="#d89232" strokeWidth={3} dot={{ fill: "#087f73", r: 4, strokeWidth: 2, stroke: "#ffffff" }} activeDot={{ r: 6, fill: "#087f73" }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

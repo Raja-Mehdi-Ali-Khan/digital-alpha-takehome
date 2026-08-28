@@ -144,7 +144,7 @@ export default function TransactionsPage() {
   ];
 
   return (
-    <div className="page-shell">
+    <div className="page-shell dashboard-page">
       <div style={{ marginBottom: "2rem" }}>
         <div className="page-kicker">Overview / Activity</div>
         <h1 className="page-title">Your spending, at a glance.</h1>
@@ -156,16 +156,19 @@ export default function TransactionsPage() {
       {/* Chart */}
       <CategoryChart
         activeCategory={category}
+        filters={{ category: category || undefined, status: status || undefined, search: debouncedSearch || undefined, start_date: startDate || undefined, end_date: endDate || undefined, min_amount: minAmount || undefined, max_amount: maxAmount || undefined }}
         onCategoryClick={(cat) => {
           setCategory(cat);
           setPage(1);
         }}
       />
 
-      <MonthlyTrendChart />
+      <MonthlyTrendChart
+        filters={{ category: category || undefined, status: status || undefined, search: debouncedSearch || undefined, start_date: startDate || undefined, end_date: endDate || undefined, min_amount: minAmount || undefined, max_amount: maxAmount || undefined }}
+      />
 
       {/* Filters */}
-      <Card style={{ marginBottom: "1.5rem" }}>
+      <Card className="filter-sidebar" style={{ marginBottom: "1.5rem" }}>
         <div className="section-heading">
           <div>
             <div className="page-kicker">Find a payment</div>

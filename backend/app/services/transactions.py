@@ -98,17 +98,34 @@ def redeem_reward(db: Session, payload: RedeemRequest):
         "new_balance": balance_row.balance
     }
 
-def get_category_spend(db: Session):
+def _analytics_query(db: Session, category, status_filter, search, start_date, end_date, min_amount, max_amount):
+    query = db.query(Transaction).join(Category)
+    query = query.filter(Transaction.status == (status_filter.upper() if status_filter else "SUCCESS"))
+    if category:
+        query = query.filter(Category.name.ilike(f"%{category}%"))
+    if search:
+        query = query.filter(Transaction.merchant.ilike(f"%{search}%"))
+    if start_date:
+        query = query.filter(Transaction.timestamp >= datetime.combine(start_date, time.min, tzinfo=timezone.utc))
+    if end_date:
+        query = query.filter(Transaction.timestamp < datetime.combine(end_date + timedelta(days=1), time.min, tzinfo=timezone.utc))
+    if min_amount is not None:
+        query = query.filter(Transaction.amount >= min_amount)
+    if max_amount is not None:
+        query = query.filter(Transaction.amount <= max_amount)
+    return query
+
+
+def get_category_spend(db: Session, category=None, status_filter=None, search=None, start_date=None, end_date=None, min_amount=None, max_amount=None):
     from sqlalchemy import func
     from app.models.models import Transaction, Category
 
+    query = _analytics_query(db, category, status_filter, search, start_date, end_date, min_amount, max_amount)
     results = (
-        db.query(
+        query.with_entities(
             Category.name,
             func.sum(Transaction.amount).label("total")
         )
-        .join(Transaction, Transaction.category_id == Category.id)
-        .filter(Transaction.status == "SUCCESS")
         .group_by(Category.name)
         .order_by(func.sum(Transaction.amount).desc())
         .all()
@@ -117,13 +134,13 @@ def get_category_spend(db: Session):
     return [{"category": r.name, "total": float(r.total)} for r in results]
 
 
-def get_monthly_spend(db: Session):
+def get_monthly_spend(db: Session, category=None, status_filter=None, search=None, start_date=None, end_date=None, min_amount=None, max_amount=None):
+    query = _analytics_query(db, category, status_filter, search, start_date, end_date, min_amount, max_amount)
     results = (
-        db.query(
+        query.with_entities(
             func.to_char(func.date_trunc("month", Transaction.timestamp), "YYYY-MM").label("month"),
             func.sum(Transaction.amount).label("total"),
         )
-        .filter(Transaction.status == "SUCCESS")
         .group_by(func.date_trunc("month", Transaction.timestamp))
         .order_by(func.date_trunc("month", Transaction.timestamp))
         .all()

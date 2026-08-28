@@ -17,6 +17,15 @@ import { Card } from "@/components/ui/Card";
 type Props = {
   onCategoryClick: (category: string) => void;
   activeCategory?: string;
+  filters?: {
+    category?: string;
+    status?: string;
+    search?: string;
+    start_date?: string;
+    end_date?: string;
+    min_amount?: string;
+    max_amount?: string;
+  };
 };
 
 const COLORS = [
@@ -24,16 +33,20 @@ const COLORS = [
   "#6f7fc4", "#3c9ba0", "#b56e9a", "#789c4c",
 ];
 
-export function CategoryChart({ onCategoryClick, activeCategory }: Props) {
+export function CategoryChart({ onCategoryClick, activeCategory, filters = {} }: Props) {
   const [data, setData] = useState<{ category: string; total: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const { category, status, search, start_date, end_date, min_amount, max_amount } = filters;
 
   useEffect(() => {
-    fetchCategorySpend()
-      .then(setData)
+    fetchCategorySpend({ category, status, search, start_date, end_date, min_amount, max_amount })
+      .then((nextData) => {
+        setData(nextData);
+        setLoading(false);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [category, status, search, start_date, end_date, min_amount, max_amount]);
 
   if (loading) {
     return (
@@ -60,16 +73,16 @@ export function CategoryChart({ onCategoryClick, activeCategory }: Props) {
           <BarChart data={data} layout="vertical" margin={{ top: 4, right: 32, bottom: 4, left: 8 }}>
             <XAxis
               type="number"
-              tick={{ fill: "#c5d8d4", fontSize: 11 }}
+              tick={{ fill: "#607873", fontSize: 11 }}
               tickFormatter={(value) => `₹${Number(value).toLocaleString("en-IN", { notation: "compact" })}`}
-              axisLine={{ stroke: "#526b72" }}
+              axisLine={{ stroke: "#b9ccc7" }}
               tickLine={false}
             />
             <YAxis
               type="category"
               dataKey="category"
               width={125}
-              tick={{ fill: "#dceee9", fontSize: 12, fontWeight: 600 }}
+              tick={{ fill: "#31534d", fontSize: 12, fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
             />
@@ -103,7 +116,7 @@ export function CategoryChart({ onCategoryClick, activeCategory }: Props) {
                   dataKey="total"
                   position="right"
                   formatter={(value) => `₹${Number(value).toLocaleString("en-IN", { notation: "compact" })}`}
-                  fill="#dceee9"
+                  fill="#31534d"
                   fontSize={11}
                   fontWeight={600}
                 />

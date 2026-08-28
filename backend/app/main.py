@@ -6,8 +6,8 @@ app = FastAPI(title="Digital Alpha API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # temporary – we will lock it later
-    allow_credentials=False,      # must be False when origins is "*"
+    allow_origins=["https://digital-alpha-takehome.netlify.app"],
+    allow_credentials=False,     
     allow_methods=["*"],
     allow_headers=["*"],
 )

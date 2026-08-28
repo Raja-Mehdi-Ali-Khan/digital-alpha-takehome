@@ -153,14 +153,6 @@ export default function TransactionsPage() {
 
   return (
     <div className="page-shell dashboard-page">
-      <div style={{ marginBottom: "2rem" }}>
-        <div className="page-kicker">Overview / Activity</div>
-        <h1 className="page-title">Your spending, at a glance.</h1>
-        <p className="page-subtitle">
-          Review recent card activity, understand your spending patterns, and keep every payment on track.
-        </p>
-      </div>
-
       {/* Chart */}
       <CategoryChart
         activeCategory={category}

@@ -41,7 +41,7 @@ export function Header() {
   });
 
   return (
-    <header style={{ position: "sticky", top: 0, zIndex: 50, background: "rgb(255 255 255 / 0.84)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-border)", padding: "0.85rem 1rem" }}>
+    <header className="app-header" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgb(255 255 255 / 0.84)", backdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-border)", padding: "0.85rem 1rem" }}>
       <div className="app-header-inner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
           <Image src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=96&q=80" alt="" width={40} height={40} style={{ borderRadius: "0.65rem", objectFit: "cover" }} />
@@ -55,7 +55,7 @@ export function Header() {
           <Link href="/rewards" style={linkStyle(pathname === "/rewards")}>Rewards</Link>
         </nav>
         <div className="balance-pill" style={{ background: "var(--color-bg)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)", padding: "0.45rem 0.75rem", fontSize: "0.9rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.4rem" }}>
-          <span style={{ color: "var(--color-accent)", fontSize: "1rem" }}>●</span>
+          <span aria-hidden="true" style={{ alignItems: "center", background: "var(--color-accent)", border: "2px solid #d89232", borderRadius: "50%", color: "#ffffff", display: "inline-flex", fontSize: "0.65rem", fontWeight: 800, height: "1.1rem", justifyContent: "center", width: "1.1rem" }}>₹</span>
           <span>{balance === null ? "…" : balance.toLocaleString("en-IN")} coins</span>
         </div>
       </div>

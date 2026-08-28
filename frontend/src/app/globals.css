@@ -22,6 +22,7 @@ body {
 
 main {
   min-height: calc(100vh - 76px);
+  padding-top: 76px;
 }
 
 ::selection {
@@ -258,6 +259,10 @@ input::placeholder {
 }
 
 @media (max-width: 520px) {
+  main {
+    padding-top: 126px;
+  }
+
   .app-header-inner {
     align-items: flex-start !important;
     flex-wrap: wrap;

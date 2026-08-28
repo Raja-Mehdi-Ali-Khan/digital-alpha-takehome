@@ -80,26 +80,26 @@ input::placeholder {
   align-items: center;
   background: var(--color-primary);
   border: 2px solid #05665d;
-  border-radius: 0.65rem;
+  border-radius: 50%;
   color: #ffffff;
   display: inline-flex;
   font-size: 0.9rem;
   font-weight: 800;
-  height: 2.5rem;
+  height: 2.35rem;
   justify-content: center;
   position: relative;
-  width: 2.5rem;
+  width: 2.35rem;
 }
 
 .brand-mark::after {
   border: 1px solid rgb(255 255 255 / 0.55);
   border-radius: 50%;
   content: "";
-  height: 1.15rem;
+  height: 1.55rem;
   position: absolute;
-  right: 0.2rem;
-  top: 0.2rem;
-  width: 1.15rem;
+  right: 0.28rem;
+  top: 0.28rem;
+  width: 1.55rem;
 }
 
 .page-title {
@@ -190,7 +190,7 @@ input::placeholder {
   left: 0;
   position: absolute;
   right: 0;
-  top: 0.82rem;
+  top: 0.67rem;
 }
 
 .range-track {
@@ -213,7 +213,7 @@ input::placeholder {
   margin: 0;
   pointer-events: none;
   position: absolute;
-  top: 0;
+  top: -0.15rem;
   width: 100%;
 }
 

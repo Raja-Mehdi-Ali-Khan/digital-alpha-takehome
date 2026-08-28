@@ -10,47 +10,51 @@ export function Button({
   size = "md",
   children,
   style,
+  disabled,
   ...props
 }: ButtonProps) {
   const base: React.CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: "var(--radius-md)",
+    borderRadius: "6px",
     fontWeight: 500,
     border: "1px solid transparent",
-    transition: "background 0.15s, border-color 0.15s",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.6 : 1,
+    transition: "all 0.15s",
   };
 
   const sizes = {
-    sm: { padding: "0.375rem 0.75rem", fontSize: "var(--text-sm)" },
-    md: { padding: "0.5rem 1rem", fontSize: "var(--text-sm)" },
-    lg: { padding: "0.75rem 1.25rem", fontSize: "var(--text-base)" },
+    sm: { padding: "6px 12px", fontSize: "13px" },
+    md: { padding: "8px 16px", fontSize: "14px" },
+    lg: { padding: "10px 20px", fontSize: "15px" },
   };
 
   const variants = {
     primary: {
-      background: "var(--color-primary)",
+      background: "#3b82f6",
       color: "white",
     },
     secondary: {
-      background: "var(--color-surface)",
-      color: "var(--color-text)",
-      borderColor: "var(--color-border)",
+      background: "#1e293b",
+      color: "#e2e8f0",
+      borderColor: "#334155",
     },
     danger: {
-      background: "var(--color-danger)",
+      background: "#ef4444",
       color: "white",
     },
     ghost: {
       background: "transparent",
-      color: "var(--color-text-muted)",
+      color: "#94a3b8",
     },
   };
 
   return (
     <button
       style={{ ...base, ...sizes[size], ...variants[variant], ...style }}
+      disabled={disabled}
       {...props}
     >
       {children}

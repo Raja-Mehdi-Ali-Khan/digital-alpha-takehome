@@ -15,3 +15,7 @@
 
 ## Pagination vs Virtualization (to be decided later)
 - Will be decided when building the transactions table (Tier 1 priority).
+
+## Pagination vs Virtualization
+- Chose **server-side pagination** (20 rows per page) instead of virtualization.
+- Why: The backend already supports pagination + filtering + sorting. Keeping the page size small (20) makes the table feel instant, reduces payload size, and is much simpler and more reliable under the 24-hour constraint. Virtualization would only be needed if we loaded all ~10k rows client-side.
